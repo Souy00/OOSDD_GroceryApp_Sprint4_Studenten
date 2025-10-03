@@ -1,16 +1,15 @@
-name: MAUI CI - Android (Windows)
+name: MAUI CI - Android & Windows
 
 on:
   push:
     branches:
       - main
-      - infra/runner-toevoegen
   pull_request:
     branches:
       - main
 
 jobs:
-  android:
+  android-windows:
     runs-on: windows-latest
 
     steps:
@@ -21,14 +20,22 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install MAUI Android workloads
+      - name: Install MAUI workloads
         run: dotnet workload install maui maui-android
 
-      - name: Restore dependencies (Android)
+      - name: Restore dependencies
         run: dotnet restore Grocery.App/Grocery.App.csproj
 
       - name: Build MAUI App (Android)
-        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-android --no-restore
+        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-android --no-restore /p:TreatWarningsAsErrors=false
+
+      - name: Build MAUI App (Windows)
+        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-windows10.0.19041.0 --no-restore /p:TreatWarningsAsErrors=false
+
+      - name: Build class libraries
+        run: |
+          dotnet build Grocery.Core/Grocery.Core.csproj --configuration Release /p:TreatWarningsAsErrors=false
+          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj --configuration Release /p:TreatWarningsAsErrors=false
 
       - name: Run unit tests
         run: dotnet test --configuration Release --verbosity normal
