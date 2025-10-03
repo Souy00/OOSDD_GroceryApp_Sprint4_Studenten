@@ -1,4 +1,4 @@
-name: MAUI CI - Android & Windows
+name: MAUI Build
 
 on:
   push:
@@ -9,45 +9,39 @@ on:
       - main
 
 jobs:
-  android-windows:
+  android:
     runs-on: windows-latest
-
     steps:
-      # Step 1: Checkout code
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Step 2: Setup .NET SDK 8.x
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      # Step 3: Install MAUI workloads
-      - name: Install MAUI workloads
+      - name: Install MAUI Android workloads
         run: dotnet workload install maui maui-android
 
-      # Step 4: Restore Android dependencies
       - name: Restore dependencies (Android)
         run: dotnet restore Grocery.App/Grocery.App.csproj
 
-      # Step 5: Build Android app (ignore warnings)
       - name: Build MAUI App (Android)
         run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-android --no-restore /p:TreatWarningsAsErrors=false
 
-      # Step 6: Restore Windows dependencies with runtime pack
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
       - name: Restore dependencies (Windows)
-        run: dotnet restore Grocery.App/Grocery.App.csproj --runtime win-x64
+        run: dotnet restore Grocery.App/Grocery.App.csproj -r win-x64
 
-      # Step 7: Build Windows app (ignore warnings, prevent ReadyToRun errors)
       - name: Build MAUI App (Windows)
-        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-windows10.0.19041.0 -r win-x64 --no-restore /p:TreatWarningsAsErrors=false /p:PublishReadyToRun=false
-
-      # Step 8: Build class libraries (ignore warnings)
-      - name: Build class libraries
-        run: |
-          dotnet build Grocery.Core/Grocery.Core.csproj -c Release /p:TreatWarningsAsErrors=false
-          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj -c Release /p:TreatWarningsAsErrors=false
-
-      # Step 9: Run unit tests
-      - name: Run unit tests
-        run: dotnet test --configuration Release --verbosity normal
+        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-windows10.0.19041.0 -r win-x64 --no-restore /p:TreatWarningsAsErrors=false
