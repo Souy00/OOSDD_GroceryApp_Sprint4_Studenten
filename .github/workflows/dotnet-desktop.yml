@@ -27,23 +27,23 @@ jobs:
       - name: Restore dependencies (Android)
         run: dotnet restore Grocery.App/Grocery.App.csproj
 
-      # Build Android app (fixed path)
+      # Build Android app (warnings ignored)
       - name: Build MAUI App (Android)
-        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-android --no-restore /p:TreatWarningsAsErrors=false
+        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-android --no-restore /p:TreatWarningsAsErrors=false /warnasmessage
 
       # Restore dependencies for Windows with runtime pack
       - name: Restore dependencies (Windows)
         run: dotnet restore Grocery.App/Grocery.App.csproj --runtime win-x64
 
-      # Build Windows app (fix NETSDK1094)
+      # Build Windows app (warnings ignored)
       - name: Build MAUI App (Windows)
-        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-windows10.0.19041.0 -r win-x64 --no-restore /p:TreatWarningsAsErrors=false /p:PublishReadyToRun=false
+        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-windows10.0.19041.0 -r win-x64 --no-restore /p:TreatWarningsAsErrors=false /warnasmessage /p:PublishReadyToRun=false
 
-      # Build class libraries
+      # Build class libraries (warnings ignored)
       - name: Build class libraries
         run: |
-          dotnet build Grocery.Core/Grocery.Core.csproj -c Release /p:TreatWarningsAsErrors=false
-          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj -c Release /p:TreatWarningsAsErrors=false
+          dotnet build Grocery.Core/Grocery.Core.csproj -c Release /p:TreatWarningsAsErrors=false /warnasmessage
+          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj -c Release /p:TreatWarningsAsErrors=false /warnasmessage
 
       # Run unit tests
       - name: Run unit tests
