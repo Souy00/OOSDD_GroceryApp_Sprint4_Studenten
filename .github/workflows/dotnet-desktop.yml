@@ -21,24 +21,24 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # Alleen de Android workload installeren
+      # Alleen Android workload installeren
       - name: Install MAUI Android workload
         run: dotnet workload install maui-android
 
-      # Restore Android dependencies using MSBuild property (iOS wordt genegeerd)
-      - name: Restore Android dependencies only
-        run: dotnet restore Grocery.App/Grocery.App.csproj /p:TargetFramework=net8.0-android
+      # Restore voor alle projecten, maar alleen Android target (iOS wordt genegeerd)
+      - name: Restore all projects (Android only)
+        run: dotnet restore /p:TargetFramework=net8.0-android
 
-      # Build class libraries (Core, Core.Data) eerst
+      # Build class libraries voor Android
       - name: Build class libraries
         run: |
-          dotnet build Grocery.Core/Grocery.Core.csproj --configuration Release --no-restore
-          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj --configuration Release --no-restore
+          dotnet build Grocery.Core/Grocery.Core.csproj -f net8.0-android --configuration Release
+          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-android --configuration Release
 
-      # Build alleen de Android-app
+      # Build Android-app
       - name: Build Android app
-        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release --no-restore
+        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release
 
       # Unit tests uitvoeren
       - name: Run unit tests
-        run: dotnet test --configuration Release --no-build --verbosity normal
+        run: dotnet test --configuration Release --verbosity normal
