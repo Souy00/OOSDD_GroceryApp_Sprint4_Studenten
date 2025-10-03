@@ -25,6 +25,12 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Label Text="#" Grid.Column="0" FontAttributes="Bold"/>
+                    <Label Text="Product" Grid.Column="1" FontAttributes="Bold"/>
+                    <Label Text="Aantal verkopen" Grid.Column="2" FontAttributes="Bold"/>
+                    <Label Text="Voorraad" Grid.Column="3" FontAttributes="Bold"/>
+
+
                     <!-- PLaats hier de header velden voor de tabel-->
                 </Grid>
             </CollectionView.Header>
@@ -37,6 +43,10 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <Label Text ="{Binding Ranking}" Grid.Column ="0"/>
+                        <Label Text="{Binding Name}" Grid.Column="1"/>
+                        <Label Text="{Binding NrOfSells}" Grid.Column="2"/>
+                        <Label Text="{Binding Stock}" Grid.Column="3"/>
                         <!-- PLaats hier de datavelden voor de tabel-->
                     </Grid>
                 </DataTemplate>
