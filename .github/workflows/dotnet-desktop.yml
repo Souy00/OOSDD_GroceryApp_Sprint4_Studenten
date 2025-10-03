@@ -1,5 +1,5 @@
-name: MAUI Unit Tests
- 
+name: MAUI CI - Android Only
+
 on:
   push:
     branches:
@@ -8,28 +8,37 @@ on:
   pull_request:
     branches:
       - main
- 
+
 jobs:
-  test:
-    runs-on: ubuntu-latest   # Blijf op Linux (geen iOS support)
+  android-ci:
+    runs-on: ubuntu-latest
     steps:
-      - name: Haal de repository op
+      - name: Checkout repository
         uses: actions/checkout@v4
- 
-      - name: Installeer .NET SDK
+
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'   # MAUI 8.0
- 
-      - name: Installeer alleen Android workload
+          dotnet-version: '8.0.x'
+
+      # Alleen de Android workload installeren
+      - name: Install MAUI Android workload
         run: dotnet workload install maui-android
 
-      # Alleen restore voor Linux-compatibele TFMs
-      - name: Herstel afhankelijkheden
-        run: dotnet restore --ignore-failed-sources /p:TargetFramework=net8.0-android
- 
-      - name: Bouw de applicatie (Android)
+      # Restore alle projecten (maar we bouwen alleen Android)
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Build alle class libraries (Core, Core.Data, etc.) zonder platform-specifiek target
+      - name: Build class libraries
+        run: |
+          dotnet build Grocery.Core/Grocery.Core.csproj --configuration Release --no-restore
+          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj --configuration Release --no-restore
+
+      # Build alleen de Android-app
+      - name: Build Android app
         run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release --no-restore
- 
-      - name: Voer unit tests uit
+
+      # Unit tests uitvoeren
+      - name: Run unit tests
         run: dotnet test --configuration Release --no-build --verbosity normal
