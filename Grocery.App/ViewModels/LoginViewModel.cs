@@ -18,7 +18,7 @@ namespace Grocery.App.ViewModels
         private string password = "user3";
 
         [ObservableProperty]
-        private string loginMessage;
+        private string loginMessage = string.Empty;
 
         public LoginViewModel(IAuthService authService, GlobalViewModel global)
         { //_authService = App.Services.GetServices<IAuthService>().FirstOrDefault();

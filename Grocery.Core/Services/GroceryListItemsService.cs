@@ -1,6 +1,7 @@
 ﻿using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
+using System.Text.RegularExpressions;
 
 namespace Grocery.Core.Services
 {
@@ -51,8 +52,33 @@ namespace Grocery.Core.Services
 
         public List<BestSellingProducts> GetBestSellingProducts(int topX = 5)
         {
-            throw new NotImplementedException();
+            // 1. Haal alle items op
+            List<GroceryListItem> allItems = _groceriesRepository.GetAll();
+
+            // 2. Vul Product property
+            FillService(allItems);
+
+            // 3. Groepeer op product en tel het aantal
+            var grouped = allItems
+                .GroupBy(item => item.Product)
+                .Select((group, Index) => new BestSellingProducts(
+                  productId: group.Key.Id,
+                  name: group.Key.Name,
+                  stock: group.Key.Stock,
+                  nrOfSells: group.Count(),
+                  ranking: Index + 1
+                 
+                ))
+                .OrderByDescending(p => p.NrOfSells)
+                .Take(topX)
+                .ToList();
+
+            return grouped;
         }
+
+
+        
+       
 
         private void FillService(List<GroceryListItem> groceryListItems)
         {
