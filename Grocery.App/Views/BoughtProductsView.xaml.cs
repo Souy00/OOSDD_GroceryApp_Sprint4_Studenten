@@ -13,16 +13,5 @@ public partial class BoughtProductsView : ContentPage
         BindingContext = viewModel;
         _viewModel = viewModel;
     }
-
-    private void Picker_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        var picker = (Picker)sender;
-        int selectedIndex = picker.SelectedIndex;
-
-        if (selectedIndex != -1)
-        {
-            Product product = picker.SelectedItem as Product;
-            _viewModel.NewSelectedProduct(product);
-        }
-    }
 }
+

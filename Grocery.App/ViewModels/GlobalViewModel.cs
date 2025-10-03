@@ -4,6 +4,6 @@ namespace Grocery.App.ViewModels
 {
     public partial class GlobalViewModel : BaseViewModel
     {
-        public Client Client { get; set; }
+        public Client? Client { get; set; } 
     }
 }
