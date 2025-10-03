@@ -25,17 +25,17 @@ jobs:
       - name: Install MAUI Android workload
         run: dotnet workload install maui-android
 
-      # Restore voor alle projecten, iOS wordt genegeerd
-      - name: Restore all projects
-        run: dotnet restore /p:TargetFramework=net8.0-android
+      # Restore alleen Android target om iOS te vermijden
+      - name: Restore Android dependencies only
+        run: dotnet restore Grocery.App/Grocery.App.csproj /p:TargetFramework=net8.0-android
 
-      # Build class libraries zonder Android target (gebruik eigen TargetFramework)
+      # Build class libraries zonder -f (gebruik hun eigen TFM)
       - name: Build class libraries
         run: |
           dotnet build Grocery.Core/Grocery.Core.csproj --configuration Release
           dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj --configuration Release
 
-      # Build Android-app met Android target
+      # Build Android-app specifiek
       - name: Build Android app
         run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release
 
