@@ -29,15 +29,25 @@ jobs:
 
       # Build Android app
       - name: Build MAUI App (Android)
-        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-android --no-restore /p:TreatWarningsAsErrors=false
+        run: dotnet build Grocery.App/Grocery.App.csproj \
+              -c Release \
+              -f net8.0-android \
+              --no-restore \
+              /p:TreatWarningsAsErrors=false
 
       # Restore Windows dependencies with runtime pack
       - name: Restore dependencies (Windows)
         run: dotnet restore Grocery.App/Grocery.App.csproj --runtime win-x64
 
-      # Build Windows app
+      # Build Windows app (fix NETSDK1094)
       - name: Build MAUI App (Windows)
-        run: dotnet build Grocery.App/Grocery.App.csproj -c Release -f net8.0-windows10.0.19041.0 -r win-x64 --no-restore /p:TreatWarningsAsErrors=false
+        run: dotnet build Grocery.App/Grocery.App.csproj \
+              -c Release \
+              -f net8.0-windows10.0.19041.0 \
+              -r win-x64 \
+              --no-restore \
+              /p:TreatWarningsAsErrors=false \
+              /p:PublishReadyToRun=false
 
       # Build class libraries
       - name: Build class libraries
